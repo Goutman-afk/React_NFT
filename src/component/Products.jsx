@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { ethers } from "ethers";
+import erc20 from "../ABI/ERC20.js";
+import marketAbi from "../ABI/Market.js";
+import nft from "../nft.png";
 
 const Products = () => {
 
@@ -9,15 +13,38 @@ const Products = () => {
 
     useEffect(() => {
         const getProducts = async () => {
+
             setLoading(true);
-            const response = await fetch("https://fakestoreapi.com/products");
+            
+      const { ethereum } = window;
+
+      if (!ethereum) {
+        alert("Please install MetaMask!");
+        return;
+      }
+
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
+
+      //   console.log("Connected", accounts[0]);
+      //   console.log(" " + ethereum.isConnected());
+      let contractAddress = "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1";
+
+      var provider = new ethers.providers.Web3Provider(ethereum);
+      const wallet = provider.getSigner();
+      //console.log(wallet);
+      const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
+      
+      console.log(await contract.marketItems(1));
+       console.log( await contract.fetchActiveItems());
+     
+            const response = await contract.fetchActiveItems();
 
             if (componentMounted == true) {
-                setData(await response.clone().json());
-                setFilter(await response.json());
+                setFilter( response);
                 setLoading(false);
-                console.log(filter)
-                console.log("Xuất ra dữ liệu đi")
+                console.log(response)
             }
 
             return () => {
@@ -26,6 +53,8 @@ const Products = () => {
         }
 
         getProducts();
+        
+
     }, []);
 
     const Loading = () => {
@@ -41,18 +70,19 @@ const Products = () => {
             <>
                 <div className='buttons d-flex justify-content-center mb-5 pb-5'>
                     <button className='snip1582'>Tất cả</button>
-                    <button className='snip1582'>Hot</button>
-                    <button className='snip1582'>Nổi bật</button>
+                    <button className='snip1582'>Giá thấp</button>
+                    <button className='snip1582'>Giá cao</button>
                 </div>
                 {filter.map((product)=>{
                     return (
                         <>
                             <div className="col-md-3 mb-4">
-                                <div className="card h-100 text-center p-4" key={product.id}>
-                                    <img src={product.image} className="card-img-top" alt={product.title} height="250px"/>
+                                <div className="card h-100 text-center p-4" key={parseInt(product.id._hex, 16)}>
+                                    <img src={nft} className="card-img-top" height="250px"/>
                                         <div className="card-body">
-                                            <h5 className="card-title mb-0">{product.title.substring(0,11)}...</h5>
-                                            <p className="card-text">${product.price}</p>
+                                        <h4 className="card-title">{parseInt(product.id._hex, 16)}</h4>
+                                        <p className="card-text">token ID: {parseInt(product.tokenId._hex, 16)}</p>
+                                            <p className="card-text">${parseInt(product.price._hex, 16)}</p>
                                             <a href="#" className="snip0059 yellow">Mua ngay</a>
                                         </div>
                                 </div>
