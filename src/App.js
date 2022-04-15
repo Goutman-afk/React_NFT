@@ -1,10 +1,14 @@
-import "./App.css";
-import NavBar from "./Components/NavBar/NavBar";
+import './App.css';
+import Home from './component/Home';
+import Navbar from './component/Navbar';
+import './style/buttonConnect.css';
+
 function App() {
   return (
-    <div className="App">
-      <NavBar />
-    </div>
+    <>
+      <Navbar></Navbar>
+      <Home></Home>
+    </>
   );
 }
 
