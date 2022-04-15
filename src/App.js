@@ -5,6 +5,7 @@ import "./style/buttonConnect.css";
 import "./style/buttonBuyNow.css"
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Products from "./component/Products";
+import Create from "./component/Create";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home/>} />
         <Route path='/products' element={<Products/>} />
+        <Route path='/create' element={<Create/>} />
       </Routes>
     </> 
   );
