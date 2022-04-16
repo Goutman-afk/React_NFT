@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { NavLink } from 'react-router-dom';
 import { ethers } from "ethers";
 import erc20 from "../ABI/ERC20.js";
 import marketAbi from "../ABI/Market.js";
@@ -19,12 +20,12 @@ const Products = () => {
             const { ethereum } = window;
 
             if (!ethereum) {
-                alert("Please install MetaMask!");
+                alert("Hãy cài đặt MetaMask trước!");
                 return;
             }
 
             const accounts = await ethereum.request({
-                method: "eth_requestAccounts",
+                method: "eth_requestAccounts"
             });
 
             //   console.log("Connected", accounts[0]);
@@ -60,7 +61,7 @@ const Products = () => {
     const Loading = () => {
         return (
             <>
-                Loading...
+                Đang tải... xin đợi trong giây lát ^^
             </>
         )
     };
@@ -83,7 +84,9 @@ const Products = () => {
                                         <h4 className="card-title">{parseInt(product.id._hex, 16)}</h4>
                                         <p className="card-text">token ID: {parseInt(product.tokenId._hex, 16)}</p>
                                         <p className="card-text">${parseInt(product.price._hex, 16)}</p>
-                                        <a href="#" className="button-24">Mua ngay</a>
+                                        <NavLink to={ '/products/' + parseInt(product.id._hex, 16)} className="button-24">
+                                            Mua ngay
+                                        </NavLink>
                                     </div>
                                 </div>
                             </div>
