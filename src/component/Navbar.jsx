@@ -22,11 +22,9 @@ const Navbar = () => {
                             <NavLink className="nav-link" to="/products">Sản phẩm</NavLink>
                         </li>
                         <li className="nav-item">
-                            <NavLink className="nav-link" to="/create">Create</NavLink>
+                            <NavLink className="nav-link" to="/create">Đăng bán</NavLink>
                         </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to="/">Đề mục 3</NavLink>
-                        </li>
+                       
                     </ul>
                     <form className="d-flex">
                         <input className="form-control me-2" type="search" placeholder="Tìm kiếm" aria-label="Search"/>
