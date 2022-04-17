@@ -41,14 +41,41 @@ const BuyProduct = () => {
             // console.log(parseInt(id))
 
             setProduct(response);
+            console.log(response)
             setLoading(false);
         }
-
+        
         getProduct();
 
     }, []);
 
+    const Buy = async() =>
+    {
+        const { ethereum } = window;
 
+        if (!ethereum) {
+            alert("Hãy cài đặt MetaMask trước!");
+            return;
+        }
+
+        const accounts = await ethereum.request({
+            method: "eth_requestAccounts"
+        });
+
+        let contractAddress = "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1";
+
+        var provider = new ethers.providers.Web3Provider(ethereum);
+        const wallet = provider.getSigner();
+        
+        const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
+        contract.purchaseItem(id,'0x236a5ddfFF07Ce416Fa4B3042b17d9A22E082A12')
+        // console.log(await contract.marketItems(parseInt(id)));
+        // console.log(parseInt(id))
+
+        
+
+
+    }
     const Loading = () => {
         return (
             <>
@@ -71,11 +98,13 @@ const BuyProduct = () => {
                         {id}
                     </h1>
                     <h3>
-                        TOKEN ID: {parseInt(product.tokenId._hex, 16)}
+                        token ID: {parseInt(product.tokenId, 16)}
                     </h3>
+                        
                     <h3 className='display-5'>
                         ${parseInt(product.price)}
                     </h3>
+                    <button className='button-24' onClick={Buy}> Buy </button>
                 </div>
             </>
         )
