@@ -3,6 +3,8 @@ import { ethers } from "ethers";
 import erc20 from "../ABI/ERC20.js";
 import marketAbi from "../ABI/Market.js";
 import nft from "../nft.png";
+import { useNavigate } from "react-router-dom";
+
 import {
   Button,
   FormGroup,
@@ -12,6 +14,7 @@ import {
 } from "react-bootstrap";
 
 const Create = () => {
+  const navigate = useNavigate();
   const [price, setprice] = useState();
   const [address, setaddress] = useState();
   const [tokenID, settokenID] = useState();
@@ -51,6 +54,7 @@ const Create = () => {
     console.log(price);
     console.log(address);
     console.log(tokenID);
+    navigate("/products");
   };
 
   return (
