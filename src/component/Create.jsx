@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import erc20 from "../ABI/ERC20.js";
+import erc721 from "../ABI/ER721";
 import marketAbi from "../ABI/Market.js";
 import nft from "../nft.png";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ import {
 } from "react-bootstrap";
 
 const Create = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [price, setprice] = useState();
   const [address, setaddress] = useState();
@@ -23,6 +24,49 @@ const Create = () => {
   //   tokenID: "",
   //   price: 0,
   // };
+
+  const Approved = () => {
+    return <></>;
+  };
+  const NotApprove = () => {
+    return (
+      <>
+        you have to approve the contract first
+        <Button variant="primary" onClick={approve}>
+          Approve
+        </Button>
+      </>
+    );
+  };
+  const approve = async () => {
+    const { ethereum } = window;
+
+    if (!ethereum) {
+      alert("Hãy cài đặt MetaMask trước!");
+      return;
+    }
+
+    const accounts = await ethereum.request({
+      method: "eth_requestAccounts",
+    });
+
+    //   console.log("Connected", accounts[0]);
+    //   console.log(" " + ethereum.isConnected());
+
+    let NftAddress = address.address;
+    console.log(NftAddress);
+    var provider = new ethers.providers.Web3Provider(ethereum);
+    const wallet = provider.getSigner();
+    //console.log(wallet);
+
+    const NFTcontract = new ethers.Contract(NftAddress, erc721, wallet);
+
+    await NFTcontract.setApprovalForAll(
+      "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1",
+      true
+    );
+    setLoading(true);
+  };
   const create = async (e) => {
     e.preventDefault();
     const { ethereum } = window;
@@ -90,6 +134,9 @@ const Create = () => {
                   type="number"
                   placeholder="Price"
                 />
+                <div className="buttons">
+                  {loading ? <Approved /> : <NotApprove />}
+                </div>
               </Form.Group>
 
               <Button variant="primary" type="submit">
