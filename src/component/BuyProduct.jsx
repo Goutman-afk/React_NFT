@@ -83,8 +83,8 @@ const BuyProduct = () => {
         <div className="col-md-8">
           <h4 className="text-uppercase text-black-50 mt-4">Thông tin Token</h4>
           <h1>{id}</h1>
-          <h3>token ID: {parseInt(product.tokenId, 16)}</h3>
-
+          <h3>token ID: {parseInt(product.tokenId)}</h3>
+          <h3>token address :{product.nftContract}</h3>
           <h3 className="display-5">${parseInt(product.price)}</h3>
           <button className="button-24" onClick={Buy}>
             {" "}

@@ -10,7 +10,6 @@ const Products = () => {
   const [filter, setFilter] = useState(data);
   const [loading, setLoading] = useState(false);
   let componentMounted = true;
-
   useEffect(() => {
     const getProducts = async () => {
       setLoading(true);
@@ -26,11 +25,13 @@ const Products = () => {
       const wallet = provider.getSigner(
         "0x5a03B38b7D3C4777FDa57F173AfeDE4B4974B57E"
       );
+      const { chainId } = await provider.getNetwork();
+      if (chainId != 4) {
+        alert("Please connect to Rinkeby network");
+        return;
+      }
       //console.log(wallet);
       const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
-
-      console.log(await contract.marketItems(1));
-      console.log(await contract.fetchActiveItems());
 
       const response = await contract.fetchActiveItems();
 
@@ -39,7 +40,6 @@ const Products = () => {
         setLoading(false);
         console.log(response);
       }
-
       return () => {
         componentMounted = false;
       };
@@ -52,18 +52,29 @@ const Products = () => {
     return <>Đang tải... xin đợi trong giây lát ^^</>;
   };
   const low = () => {
-    // setFilter(data.filter((item) => item.price < 100));
+    let temp = [...filter];
+    temp.sort((a, b) => a.price - b.price);
+
+    setFilter(temp);
+  };
+  const high = () => {
+    let temp = [...filter];
+    temp.sort((a, b) => b.price - a.price);
+
+    setFilter(temp);
   };
 
   const ShowProducts = () => {
     return (
       <>
         <div className="buttons d-flex justify-content-center mb-5 pb-5">
-          <button className="snip1582">Tất cả</button>
           <button className="snip1582" onClick={low}>
             Giá thấp
           </button>
-          <button className="snip1582">Giá cao</button>
+          <button className="snip1582" onClick={high}>
+            {" "}
+            Giá cao
+          </button>
         </div>
         {filter.map((product) => {
           return (
@@ -81,6 +92,7 @@ const Products = () => {
                     <p className="card-text">
                       token ID: {parseInt(product.tokenId._hex, 16)}
                     </p>
+                    <p> address: {product.nftContract}</p>
                     <p className="card-text">
                       ${parseInt(product.price._hex, 16)}
                     </p>
