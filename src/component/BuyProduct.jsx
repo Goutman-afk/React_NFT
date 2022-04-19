@@ -60,7 +60,11 @@ const BuyProduct = () => {
 
     var provider = new ethers.providers.Web3Provider(ethereum);
     const wallet = provider.getSigner();
-
+    const { chainId } = await provider.getNetwork();
+    if (chainId != 4) {
+      alert("Please connect to Rinkeby network");
+      return;
+    }
     const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
     await contract.purchaseItem(
       id,
