@@ -26,6 +26,17 @@ const Navbar = () => {
     var provider = new ethers.providers.Web3Provider(ethereum);
     const wallet = provider.getSigner();
     //console.log(wallet);
+    const { chainId } = await provider.getNetwork();
+    if (chainId != 4) {
+      await ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [
+          {
+            chainId: "0x4",
+          },
+        ],
+      });
+    }
     const contract = new ethers.Contract(contractAddress, erc20, wallet);
     const NFTcontract = new ethers.Contract(NftAddress, erc721, wallet);
     await contract.approve(

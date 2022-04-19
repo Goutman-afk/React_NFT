@@ -25,10 +25,17 @@ const Products = () => {
       const wallet = provider.getSigner(
         "0x5a03B38b7D3C4777FDa57F173AfeDE4B4974B57E"
       );
+
       const { chainId } = await provider.getNetwork();
       if (chainId != 4) {
-        alert("Please connect to Rinkeby network");
-        return;
+        await ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [
+            {
+              chainId: "0x4",
+            },
+          ],
+        });
       }
       //console.log(wallet);
       const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
