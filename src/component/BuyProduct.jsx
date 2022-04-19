@@ -20,19 +20,13 @@ const BuyProduct = () => {
 
       const { ethereum } = window;
 
-      if (!ethereum) {
-        alert("Hãy cài đặt MetaMask trước!");
-        return;
-      }
-
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
       let contractAddress = "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1";
 
-      var provider = new ethers.providers.Web3Provider(ethereum);
-      const wallet = provider.getSigner();
+      var url = "https://rinkeby.infura.io/v3/acbb86b9cfc44c61ab6cf4a03fcee90b";
+      var provider = new ethers.providers.JsonRpcProvider(url);
+      const wallet = provider.getSigner(
+        "0x5a03B38b7D3C4777FDa57F173AfeDE4B4974B57E"
+      );
 
       const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
 
