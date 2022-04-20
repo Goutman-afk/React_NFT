@@ -4,8 +4,10 @@ import { ethers } from "ethers";
 import erc20 from "../ABI/ERC20.js";
 import marketAbi from "../ABI/Market.js";
 import nft from "../nft.png";
+import { useNavigate } from "react-router-dom";
 
 const Personal = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState(data);
   const [loading, setLoading] = useState(false);
@@ -59,7 +61,40 @@ const Personal = () => {
 
     getProducts();
   }, []);
+  const revoke = async (id) => {
+    const { ethereum } = window;
 
+    if (!ethereum) {
+      alert("Hãy cài đặt MetaMask trước!");
+      return;
+    }
+
+    const accounts = await ethereum.request({
+      method: "eth_requestAccounts",
+    });
+
+    let contractAddress = "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1";
+
+    var provider = new ethers.providers.Web3Provider(ethereum);
+    const wallet = provider.getSigner();
+    const { chainId } = await provider.getNetwork();
+    if (chainId != 4) {
+      await ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [
+          {
+            chainId: "0x4",
+          },
+        ],
+      });
+    }
+    const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
+    console.log(id);
+    await contract.returnNFT(id);
+    navigate("/personal");
+    // console.log(await contract.marketItems(parseInt(id)));
+    // console.log(parseInt(id))
+  };
   const Loading = () => {
     return <>Đang tải... xin đợi trong giây lát ^^</>;
   };
@@ -108,12 +143,12 @@ const Personal = () => {
                     <p className="card-text">
                       ${parseInt(product.price._hex, 16)}
                     </p>
-                    <NavLink
-                      to={"/products/" + parseInt(product.id._hex, 16)}
+                    <button
+                      onClick={() => revoke(parseInt(product.id._hex, 16))}
                       className="button-24"
                     >
                       Lấy lại token
-                    </NavLink>
+                    </button>
                   </div>
                 </div>
               </div>
