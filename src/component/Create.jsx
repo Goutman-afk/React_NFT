@@ -46,10 +46,6 @@ const Create = () => {
       return;
     }
 
-    const accounts = await ethereum.request({
-      method: "eth_requestAccounts",
-    });
-
     //   console.log("Connected", accounts[0]);
     //   console.log(" " + ethereum.isConnected());
 

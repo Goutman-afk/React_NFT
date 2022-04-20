@@ -105,6 +105,11 @@ const Navbar = () => {
                 Đăng bán
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/personal">
+                Personal
+              </NavLink>
+            </li>
           </ul>
           <form className="d-flex">
             <input

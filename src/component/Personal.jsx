@@ -5,7 +5,7 @@ import erc20 from "../ABI/ERC20.js";
 import marketAbi from "../ABI/Market.js";
 import nft from "../nft.png";
 
-const Products = () => {
+const Personal = () => {
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState(data);
   const [loading, setLoading] = useState(false);
@@ -43,9 +43,14 @@ const Products = () => {
       const response = await contract.fetchActiveItems();
 
       if (componentMounted == true) {
-        setFilter(response);
+        const result = response.filter(
+          (item) => item.seller == 0x5a03b38b7d3c4777fda57f173afede4b4974b57e
+        );
+        console.log(result);
+        console.log(response[0].seller);
+        setFilter(result);
         setLoading(false);
-        console.log(response);
+        console.log(filter);
       }
       return () => {
         componentMounted = false;
@@ -107,7 +112,7 @@ const Products = () => {
                       to={"/products/" + parseInt(product.id._hex, 16)}
                       className="button-24"
                     >
-                      Mua ngay
+                      Lấy lại token
                     </NavLink>
                   </div>
                 </div>
@@ -138,4 +143,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Personal;
