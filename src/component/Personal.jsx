@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 import erc20 from "../ABI/ERC20.js";
 import marketAbi from "../ABI/Market.js";
 import nft from "../nft.png";
+import { FaEthereum } from 'react-icons/fa'
 
 const Personal = () => {
   const [data, setData] = useState([]);
@@ -106,7 +107,8 @@ const Personal = () => {
                     </p>
                     <p> address: {product.nftContract}</p>
                     <p className="card-text">
-                      ${parseInt(product.price._hex, 16)}
+                      <FaEthereum />
+                      {parseInt(product.price._hex, 16)}
                     </p>
                     <NavLink
                       to={"/products/" + parseInt(product.id._hex, 16)}
