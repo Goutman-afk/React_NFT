@@ -5,6 +5,7 @@ import erc20 from "../ABI/ERC20.js";
 import marketAbi from "../ABI/Market.js";
 import nft from "../nft.png";
 import { useNavigate } from "react-router-dom";
+import { FaEthereum } from "react-icons/fa";
 
 const Personal = () => {
   const navigate = useNavigate();
@@ -141,7 +142,8 @@ const Personal = () => {
                     </p>
                     <p> address: {product.nftContract}</p>
                     <p className="card-text">
-                      ${parseInt(product.price._hex, 16)}
+                      <FaEthereum />
+                      {parseInt(product.price._hex, 16)}
                     </p>
                     <button
                       onClick={() => revoke(parseInt(product.id._hex, 16))}

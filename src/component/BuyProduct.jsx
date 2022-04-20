@@ -5,6 +5,7 @@ import erc20 from "../ABI/ERC20";
 import marketAbi from "../ABI/Market";
 import nft from "../nft.png";
 import { useNavigate } from "react-router-dom";
+import { FaEthereum } from 'react-icons/fa'
 
 const BuyProduct = () => {
   const navigate = useNavigate();
@@ -96,7 +97,7 @@ const BuyProduct = () => {
           <h1>{id}</h1>
           <h3>token ID: {parseInt(product.tokenId)}</h3>
           <h3>token address :{product.nftContract}</h3>
-          <h3 className="display-5">${parseInt(product.price)}</h3>
+          <h3 className="display-5"><FaEthereum />{parseInt(product.price)}</h3>
           <button className="button-24" onClick={Buy}>
             {" "}
             Buy{" "}
