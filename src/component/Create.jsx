@@ -5,6 +5,7 @@ import marketAbi from "../ABI/Market.js";
 import nft from "../nft.png";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
+import { FaEthereum } from "react-icons/fa";
 
 import {
   Button,
@@ -196,8 +197,10 @@ const Create = () => {
                 />
               </Form.Group>
 
-              <Form.Group className="md-2" controlId="formBasicPassword">
-                <Form.Label>Price</Form.Label>
+              <Form.Group className="md-1" controlId="formBasicPassword">
+                <Form.Label>
+                  Price <FaEthereum />{" "}
+                </Form.Label>
                 <Form.Control
                   onChange={(e) => setprice({ price: e.target.value })}
                   type="number"
