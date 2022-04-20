@@ -44,7 +44,7 @@ const Personal = () => {
 
       if (componentMounted == true) {
         const result = response.filter(
-          (item) => item.seller == 0x5a03b38b7d3c4777fda57f173afede4b4974b57e
+          (item) => item.seller == parseInt(accounts[0])
         );
         console.log(result);
         console.log(response[0].seller);
