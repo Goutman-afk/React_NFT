@@ -17,45 +17,55 @@ import {
 
 const Create = () => {
   const [options, setoptions] = useState([]);
+  const [nftId, setnftId] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [price, setprice] = useState();
-  const [address, setaddress] = useState();
+  const [address, setaddress] = useState([{ address: "" }]);
   const [tokenID, settokenID] = useState();
-  // State = {
-  //   address: "",
-  //   tokenID: "",
-  //   price: 0,
-  // };
+  useEffect(() => {
+    const dataFecth = async () => {
+      const { ethereum } = window;
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      let response = await fetch(
+        "https://testnets-api.opensea.io/api/v1/assets?owner=" +
+          accounts[0] +
+          "&limit=200"
+      ).then((response) => response.json());
+      console.log(response);
+      const cats = await response.assets.reduce(
+        (catMemo, { asset_contract }) => {
+          (catMemo[asset_contract.address] =
+            catMemo[asset_contract.address] || []).push(asset_contract.address);
+          return catMemo;
+        },
+        {}
+      );
+      // console.log(Object.values(cats));
 
-  // useEffect(() => {
-  //   const test = async () => {
-  //     const { ethereum } = window;
-  //     const accounts = await ethereum.request({
-  //       method: "eth_requestAccounts",
-  //     });
-  //     let response = await fetch(
-  //       "https://testnets-api.opensea.io/api/v1/assets?owner=" +
-  //         accounts[0] +
-  //         "&limit=200"
-  //     ).then((response) => response.json());
-  //     // let result = response.assets.groupBy(
-  //     //   ({ asset_contract }) => asset_contract.address
-  //     // );
-  //     // console.log(result); // "Some User token"
+      let technologyList = Object.values(Object.getOwnPropertyNames(cats));
+      let temp = [];
+      technologyList.forEach(function (element) {
+        temp.push({ label: element, value: element });
+      });
+      let temp1 = [];
+      response.assets.forEach(function (element) {
+        temp1.push({
+          label: element.token_id,
+          value: element.token_id,
+          id: element.asset_contract.address,
+        });
+      });
+      //console.log(temp1);
+      setnftId(temp1);
+      setoptions(temp);
+      console.log(nftId);
+    };
 
-  //     const cats = await response.assets.reduce(
-  //       (catMemo, { asset_contract }) => {
-  //         (catMemo[asset_contract.address] =
-  //           catMemo[asset_contract.address] || []).push(asset_contract.address);
-  //         return catMemo;
-  //       },
-  //       {}
-  //     );
-  //     console.log(cats);
-  //   };
-  //   test();
-  // }, []);
+    dataFecth();
+  }, []);
   const dataFecth = async () => {
     const { ethereum } = window;
     const accounts = await ethereum.request({
@@ -90,9 +100,6 @@ const Create = () => {
         you have to approve the contract first
         <Button variant="primary" onClick={approve}>
           Approve
-        </Button>
-        <Button variant="primary" onClick={dataFecth}>
-          fecth
         </Button>
       </>
     );
@@ -191,9 +198,10 @@ const Create = () => {
 
               <Form.Group className="md-5">
                 <Form.Label>Token ID</Form.Label>
-                <Form.Control
-                  onChange={(e) => settokenID({ tokenID: e.target.value })}
+                <Select
+                  onChange={(e) => settokenID({ tokenID: e.value })}
                   placeholder="Enter Token ID"
+                  options={nftId.filter((item) => item.id == address.address)}
                 />
               </Form.Group>
 
