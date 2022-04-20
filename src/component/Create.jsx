@@ -124,8 +124,14 @@ const Create = () => {
     const NFTcontract = new ethers.Contract(NftAddress, erc721, wallet);
     const { chainId } = await provider.getNetwork();
     if (chainId != 4) {
-      alert("Please connect to Rinkeby network");
-      return;
+      await ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [
+          {
+            chainId: "0x4",
+          },
+        ],
+      });
     }
     await NFTcontract.setApprovalForAll(
       "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1",
