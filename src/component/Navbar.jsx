@@ -66,7 +66,6 @@ const Navbar = () => {
           <i className="fa fa-sign-in me-1"></i>
           Đăng nhập
         </button>
-        ;
       </>
     );
   };
