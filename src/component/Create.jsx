@@ -4,6 +4,7 @@ import erc721 from "../ABI/ER721";
 import marketAbi from "../ABI/Market.js";
 import nft from "../nft.png";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 
 import {
   Button,
@@ -14,6 +15,7 @@ import {
 } from "react-bootstrap";
 
 const Create = () => {
+  const [options, setoptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [price, setprice] = useState();
@@ -25,6 +27,59 @@ const Create = () => {
   //   price: 0,
   // };
 
+  // useEffect(() => {
+  //   const test = async () => {
+  //     const { ethereum } = window;
+  //     const accounts = await ethereum.request({
+  //       method: "eth_requestAccounts",
+  //     });
+  //     let response = await fetch(
+  //       "https://testnets-api.opensea.io/api/v1/assets?owner=" +
+  //         accounts[0] +
+  //         "&limit=200"
+  //     ).then((response) => response.json());
+  //     // let result = response.assets.groupBy(
+  //     //   ({ asset_contract }) => asset_contract.address
+  //     // );
+  //     // console.log(result); // "Some User token"
+
+  //     const cats = await response.assets.reduce(
+  //       (catMemo, { asset_contract }) => {
+  //         (catMemo[asset_contract.address] =
+  //           catMemo[asset_contract.address] || []).push(asset_contract.address);
+  //         return catMemo;
+  //       },
+  //       {}
+  //     );
+  //     console.log(cats);
+  //   };
+  //   test();
+  // }, []);
+  const dataFecth = async () => {
+    const { ethereum } = window;
+    const accounts = await ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    let response = await fetch(
+      "https://testnets-api.opensea.io/api/v1/assets?owner=" +
+        accounts[0] +
+        "&limit=200"
+    ).then((response) => response.json());
+
+    const cats = await response.assets.reduce((catMemo, { asset_contract }) => {
+      catMemo[asset_contract.address] =
+        catMemo[asset_contract.address] || [].push(asset_contract.address);
+      return catMemo;
+    }, {});
+    let technologyList = Object.values(Object.getOwnPropertyNames(cats));
+    let temp = [];
+    technologyList.forEach(function (element) {
+      temp.push({ label: element, value: element });
+    });
+
+    setoptions(temp);
+    console.log(temp);
+  };
   const Approved = () => {
     return <></>;
   };
@@ -34,6 +89,9 @@ const Create = () => {
         you have to approve the contract first
         <Button variant="primary" onClick={approve}>
           Approve
+        </Button>
+        <Button variant="primary" onClick={dataFecth}>
+          fecth
         </Button>
       </>
     );
@@ -119,18 +177,18 @@ const Create = () => {
           <div className="col-md-4 card h-100 text-center p-4 mt-4">
             <img src={nft} height="400px" width="400px" />
           </div>
-          <div className="col-md-3  h-100  p-4 mt-4">
+          <div className="col-md-5  h-100  p-4 mt-4">
             <Form onSubmit={create}>
-              <Form.Group className="md-1">
+              <Form.Group className="md-4">
                 <Form.Label>NFT address</Form.Label>
-                <Form.Control
-                  onChange={(e) => setaddress({ address: e.target.value })}
-                  type="text"
+                <Select
+                  onChange={(e) => setaddress({ address: e.value })}
                   placeholder="Enter NFT address"
+                  options={options}
                 />
               </Form.Group>
 
-              <Form.Group className="md-1">
+              <Form.Group className="md-5">
                 <Form.Label>Token ID</Form.Label>
                 <Form.Control
                   onChange={(e) => settokenID({ tokenID: e.target.value })}
@@ -138,7 +196,7 @@ const Create = () => {
                 />
               </Form.Group>
 
-              <Form.Group className="md-1" controlId="formBasicPassword">
+              <Form.Group className="md-2" controlId="formBasicPassword">
                 <Form.Label>Price</Form.Label>
                 <Form.Control
                   onChange={(e) => setprice({ price: e.target.value })}

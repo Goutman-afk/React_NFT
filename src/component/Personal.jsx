@@ -21,7 +21,7 @@ const Personal = () => {
       const accounts = await ethereum.request({
         method: "eth_requestAccounts",
       });
-      console.log("Connected", accounts[0]);
+
       //   console.log(" " + ethereum.isConnected());
       let contractAddress = "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1";
 
@@ -49,11 +49,9 @@ const Personal = () => {
         const result = response.filter(
           (item) => item.seller == parseInt(accounts[0])
         );
-        console.log(result);
-        console.log(response[0].seller);
+
         setFilter(result);
         setLoading(false);
-        console.log(filter);
       }
       return () => {
         componentMounted = false;
@@ -61,6 +59,30 @@ const Personal = () => {
     };
 
     getProducts();
+
+    const test = async () => {
+      const { ethereum } = window;
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      let response = await fetch(
+        "https://testnets-api.opensea.io/api/v1/assets?owner=" +
+          accounts[0] +
+          "&limit=200"
+      ).then((response) => response.json());
+      // let result = response.assets.groupBy(
+      //   ({ asset_contract }) => asset_contract.address
+      // );
+      // console.log(result); // "Some User token"
+
+      const cats = response.assets.reduce((catMemo, { asset_contract }) => {
+        (catMemo[asset_contract.address] =
+          catMemo[asset_contract.address] || []).push(asset_contract.address);
+        return catMemo;
+      }, {});
+      console.log(cats);
+    };
+    test();
   }, []);
   const revoke = async (id) => {
     const { ethereum } = window;
@@ -90,7 +112,7 @@ const Personal = () => {
       });
     }
     const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
-    console.log(id);
+
     await contract.returnNFT(id);
     navigate("/personal");
     // console.log(await contract.marketItems(parseInt(id)));
