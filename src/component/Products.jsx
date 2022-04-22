@@ -4,8 +4,8 @@ import { ethers } from "ethers";
 import erc20 from "../ABI/ERC20.js";
 import marketAbi from "../ABI/Market.js";
 import nft from "../nft.png";
-import { FaEthereum } from 'react-icons/fa'
- 
+import { FaEthereum } from "react-icons/fa";
+
 const Products = () => {
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState(data);
@@ -15,31 +15,16 @@ const Products = () => {
     const getProducts = async () => {
       setLoading(true);
 
-      const { ethereum } = window;
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      console.log("Connected", accounts[0]);
-      //   console.log(" " + ethereum.isConnected());
       let contractAddress = "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1";
 
       var url = "https://rinkeby.infura.io/v3/acbb86b9cfc44c61ab6cf4a03fcee90b";
       var provider = new ethers.providers.JsonRpcProvider(url);
-      const wallet = provider.getSigner(accounts[0]);
 
-      const { chainId } = await provider.getNetwork();
-      if (chainId != 4) {
-        await ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [
-            {
-              chainId: "0x4",
-            },
-          ],
-        });
-      }
-      //console.log(wallet);
-      const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
+      const contract = new ethers.Contract(
+        contractAddress,
+        marketAbi,
+        provider
+      );
 
       const response = await contract.fetchActiveItems();
 
@@ -104,7 +89,7 @@ const Products = () => {
                     <p className="card-text">
                       <FaEthereum />
                       {parseInt(product.price._hex, 16)}
-                    </p>  
+                    </p>
                     <NavLink
                       to={"/products/" + parseInt(product.id._hex, 16)}
                       className="button-24"
