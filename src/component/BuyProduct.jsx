@@ -5,7 +5,7 @@ import erc20 from "../ABI/ERC20";
 import marketAbi from "../ABI/Market";
 import nft from "../nft.png";
 import { useNavigate } from "react-router-dom";
-import { FaEthereum } from 'react-icons/fa'
+import { FaEthereum } from "react-icons/fa";
 
 const BuyProduct = () => {
   const navigate = useNavigate();
@@ -19,18 +19,16 @@ const BuyProduct = () => {
 
       console.log("Qua trang buy product rồi nè!");
 
-      const { ethereum } = window;
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      console.log("Connected", accounts[0]);
       let contractAddress = "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1";
 
       var url = "https://rinkeby.infura.io/v3/acbb86b9cfc44c61ab6cf4a03fcee90b";
       var provider = new ethers.providers.JsonRpcProvider(url);
-      const wallet = provider.getSigner(accounts[0]);
 
-      const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
+      const contract = new ethers.Contract(
+        contractAddress,
+        marketAbi,
+        provider
+      );
 
       const response = await contract.marketItems(parseInt(id));
 
@@ -97,7 +95,10 @@ const BuyProduct = () => {
           <h1>{id}</h1>
           <h3>token ID: {parseInt(product.tokenId)}</h3>
           <h3>token address :{product.nftContract}</h3>
-          <h3 className="display-5"><FaEthereum />{parseInt(product.price)}</h3>
+          <h3 className="display-5">
+            <FaEthereum />
+            {parseInt(product.price)}
+          </h3>
           <button className="button-24" onClick={Buy}>
             {" "}
             Buy{" "}
