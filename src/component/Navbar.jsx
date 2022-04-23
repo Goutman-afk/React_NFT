@@ -49,7 +49,7 @@ const Navbar = () => {
     );
     setLoading(true);
   };
-  const CheckLogin = () => {
+  const AlreadyLogin = () => {
     return (
       <>
         <button className="snip1582">
@@ -118,9 +118,9 @@ const Navbar = () => {
               aria-label="Search"
             />
           </form>
-          <div className="buttons">
-            {loading ? <CheckLogin /> : <NotLogin />}
-          </div>
+          {/* <div className="buttons">
+            {loading ? <AlreadyLogin /> : <NotLogin />}
+          </div> */}
         </div>
       </div>
     </nav>

@@ -28,7 +28,7 @@ const Personal = () => {
       var url = "https://rinkeby.infura.io/v3/acbb86b9cfc44c61ab6cf4a03fcee90b";
       var provider = new ethers.providers.JsonRpcProvider(url);
       const wallet = provider.getSigner(accounts[0]);
-
+      console.log(accounts);
       const { chainId } = await provider.getNetwork();
       if (chainId != 4) {
         await ethereum.request({
@@ -59,30 +59,6 @@ const Personal = () => {
     };
 
     getProducts();
-
-    const test = async () => {
-      const { ethereum } = window;
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      let response = await fetch(
-        "https://testnets-api.opensea.io/api/v1/assets?owner=" +
-          accounts[0] +
-          "&limit=200"
-      ).then((response) => response.json());
-      // let result = response.assets.groupBy(
-      //   ({ asset_contract }) => asset_contract.address
-      // );
-      // console.log(result); // "Some User token"
-
-      const cats = response.assets.reduce((catMemo, { asset_contract }) => {
-        (catMemo[asset_contract.address] =
-          catMemo[asset_contract.address] || []).push(asset_contract.address);
-        return catMemo;
-      }, {});
-      console.log(cats);
-    };
-    test();
   }, []);
   const revoke = async (id) => {
     const { ethereum } = window;

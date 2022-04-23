@@ -8,6 +8,7 @@ import Products from "./component/Products";
 import Create from "./component/Create";
 import BuyProduct from "./component/BuyProduct";
 import Personal from "./component/Personal";
+import { useEffect } from "react";
 
 function App() {
   return (

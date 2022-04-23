@@ -23,6 +23,8 @@ const Create = () => {
   const [price, setprice] = useState();
   const [address, setaddress] = useState([{ address: "" }]);
   const [tokenID, settokenID] = useState();
+  const [check, setCheck] = useState(true);
+
   useEffect(() => {
     const dataFecth = async () => {
       const { ethereum } = window;
@@ -91,14 +93,20 @@ const Create = () => {
     setoptions(temp);
     console.log(temp);
   };
-  const Approved = () => {
-    return <></>;
+  const AlreadyApprove = () => {
+    return (
+      <>
+        <button className="button-24" onClick={create}>
+          Public to market
+        </button>
+      </>
+    );
   };
   const NotApprove = () => {
     return (
       <>
         you have to approve the contract first
-        <Button variant="primary" onClick={approve}>
+        <Button variant="button" onClick={approve}>
           Approve
         </Button>
       </>
@@ -138,6 +146,7 @@ const Create = () => {
       true
     );
     setLoading(true);
+    setCheck(!check);
   };
   const create = async (e) => {
     e.preventDefault();
@@ -155,7 +164,7 @@ const Create = () => {
     //   console.log("Connected", accounts[0]);
     //   console.log(" " + ethereum.isConnected());
     let contractAddress = "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1";
-
+    let NftAddress = address.address;
     var provider = new ethers.providers.Web3Provider(ethereum);
     const wallet = provider.getSigner();
     const { chainId } = await provider.getNetwork();
@@ -170,18 +179,30 @@ const Create = () => {
       });
     }
     //console.log(wallet);
+    const NFTcontract = new ethers.Contract(NftAddress, erc721, wallet);
     const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
-
-    await contract.createMarketItem(
-      parseInt(price.price),
-      address.address,
-      tokenID.tokenID
+    let isApproved = await NFTcontract.isApprovedForAll(
+      accounts[0],
+      "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1"
     );
+    console.log(isApproved);
+    if (!isApproved) {
+      alert("You must approve contract first");
+      setCheck(!check);
+      return;
+    } else {
+      await contract.createMarketItem(
+        parseInt(price.price),
+        address.address,
+        tokenID.tokenID
+      );
+      setCheck(!check);
+      navigate("/products");
+    }
 
     console.log(price);
     console.log(address);
     console.log(tokenID);
-    navigate("/products");
   };
 
   return (
@@ -220,14 +241,8 @@ const Create = () => {
                   type="number"
                   placeholder="Price"
                 />
-                <div className="buttons">
-                  {loading ? <Approved /> : <NotApprove />}
-                </div>
               </Form.Group>
-
-              <Button variant="primary" type="submit">
-                Public to Market
-              </Button>
+              <div>{check ? <AlreadyApprove /> : <NotApprove />}</div>
             </Form>
           </div>
         </div>

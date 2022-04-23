@@ -12,6 +12,8 @@ const BuyProduct = () => {
   const { id } = useParams();
   const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [check, setCheck] = useState(true);
+  const [price, setPrice] = useState(0);
 
   useEffect(() => {
     const getProduct = async () => {
@@ -36,28 +38,41 @@ const BuyProduct = () => {
       // console.log(parseInt(id))
 
       setProduct(response);
-      console.log(response);
+
+      setPrice(parseInt(response.price));
 
       setLoading(false);
     };
 
     getProduct();
   }, []);
+  const AlreadyLogin = () => {
+    return (
+      <>
+        <button className="button-24" onClick={Buy}>
+          Buy
+        </button>
+      </>
+    );
+  };
+  const NotLogin = () => {
+    return (
+      <>
+        <h4>You need to approve first</h4>
+        <button className="button-24" onClick={Approve}>
+          Approve
+        </button>
+      </>
+    );
+  };
 
   const Buy = async () => {
     const { ethereum } = window;
-
-    if (!ethereum) {
-      alert("Hãy cài đặt MetaMask trước!");
-      return;
-    }
-
     const accounts = await ethereum.request({
       method: "eth_requestAccounts",
     });
-
     let contractAddress = "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1";
-
+    let address = "0x236a5ddfFF07Ce416Fa4B3042b17d9A22E082A12";
     var provider = new ethers.providers.Web3Provider(ethereum);
     const wallet = provider.getSigner();
     const { chainId } = await provider.getNetwork();
@@ -71,14 +86,65 @@ const BuyProduct = () => {
         ],
       });
     }
-    const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
-    await contract.purchaseItem(
-      id,
-      "0x236a5ddfFF07Ce416Fa4B3042b17d9A22E082A12"
+    const erc20contract = new ethers.Contract(address, erc20, provider);
+
+    let temp = parseInt(
+      await erc20contract.allowance(accounts[0], contractAddress)
     );
-    navigate("/products");
+    console.log(price);
+    if (price > temp) {
+      alert("You must have enough allowance");
+      setCheck(!check);
+
+      return;
+    } else {
+      console.log(price);
+      console.log(temp);
+      const contract = new ethers.Contract(contractAddress, marketAbi, wallet);
+      await contract.purchaseItem(
+        id,
+        "0x236a5ddfFF07Ce416Fa4B3042b17d9A22E082A12"
+      );
+      navigate("/products");
+    }
     // console.log(await contract.marketItems(parseInt(id)));
     // console.log(parseInt(id))
+  };
+  const Approve = async () => {
+    const { ethereum } = window;
+
+    if (!ethereum) {
+      alert("Hãy cài đặt MetaMask trước!");
+      return;
+    }
+
+    const accounts = await ethereum.request({
+      method: "eth_requestAccounts",
+    });
+
+    //   console.log("Connected", accounts[0]);
+    //   console.log(" " + ethereum.isConnected());
+    let contractAddress = "0x236a5ddfFF07Ce416Fa4B3042b17d9A22E082A12";
+    var provider = new ethers.providers.Web3Provider(ethereum);
+    const wallet = provider.getSigner();
+    //console.log(wallet);
+    const { chainId } = await provider.getNetwork();
+    if (chainId != 4) {
+      await ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [
+          {
+            chainId: "0x4",
+          },
+        ],
+      });
+    }
+    const contract = new ethers.Contract(contractAddress, erc20, wallet);
+    await contract.approve(
+      "0xe7f28563eE00273dcB0c424383f3C889cCfF69D1",
+      999999999999999
+    );
+    setCheck(!check);
   };
   const Loading = () => {
     return <>Đang tải... xin đợi trong giây lát ^^</>;
@@ -99,10 +165,7 @@ const BuyProduct = () => {
             <FaEthereum />
             {parseInt(product.price)}
           </h3>
-          <button className="button-24" onClick={Buy}>
-            {" "}
-            Buy{" "}
-          </button>
+          <div>{check ? <AlreadyLogin /> : <NotLogin />}</div>
         </div>
       </>
     );
